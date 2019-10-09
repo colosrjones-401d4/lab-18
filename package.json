@@ -2,7 +2,7 @@
   "name": "events-lab",
   "version": "1.0.0",
   "description": "Events Lab",
-  "main": "app.js",
+  "main": "app/app.js",
   "scripts": {
     "test": "jest --verbose --coverage",
     "start": "node server.js"
