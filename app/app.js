@@ -1,17 +1,39 @@
 'use strict';
 
-const hub = require('./hub');
-const uuid = require('uuid');
+const eventHub = require('./modules/eventHub');
+const getFile = require('./modules/readFile');
+const writeFile = require('./modules/writeFile');
+const toUpperCase = require('./modules/toUpperCase');
+require('./modules/logger');
+require('./modules/network-logger');
+require('./modules/socket-io-logger');
 
-require('./logger');
-require('./socket-io-logger');
-require('./cache-invalidator');
+console.log('App is listening');
 
-console.log('App is listening!');
+/**
+ * Alters text in file to all uppercase and saves to same file
+ * @param {*} file - file path to alter
+ */
+const alterFile = async (file) => {
+  try {
+    let data = await getFile(file);
+    let text = toUpperCase(data);
+    writeFile(file, text);
+  } catch(error) {
+    eventHub.emit('error', 'Unable to access or write to file!');
+  }
+};
 
-const { saveToDb } = require('./db');
+let file = process.argv.slice(2).shift() || './test.txt';
+let badFile = './bad.txt';
 
-// Don't save until we're probably connected
+let files = [file, badFile];
+
 setInterval(() => {
-  saveToDb({ name: uuid() });
-}, 500);
+  alterFile(files[randomInt()]);
+}, 1000);
+
+function randomInt(min = 0, max = 1) {
+  let int = Math.round(Math.random() * max);
+  return int;
+}

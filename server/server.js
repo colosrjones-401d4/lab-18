@@ -5,27 +5,19 @@ const uuid = require('uuid');
 
 const PORT = process.env.PORT || 3000;
 const server = socketIO(PORT);
-console.log(`Listening on port ${PORT}`);
+console.log(`I know that you came to party baby, baby, baby, baby on ${PORT}`);
 
 server.on('connection', socket => {
-  console.log(`connected!`, socket.id);
+  console.log(`New Connection: ${socket.id}`);
 
-  socket.on('send-chat', data => {
-    server.emit('chat', data);
+  socket.emit(`Connected to server at http://localhost:${PORT}`);
+
+  socket.on('file-save', data => {
+    server.emit('file-save', data);
   });
-});
 
-setInterval(() => {
-  let payload = uuid();
-  console.log('chat', payload);
-  server.emit('chat', payload);
-}, 2500);
-
-const dbServer = server.of('/database');
-dbServer.on('connection', socket => {
-  console.log('DB connection', socket.id);
-
-  socket.on('save', payload => {
-    console.log('received save', payload);
+  socket.on('file-error', data => {
+    server.emit('file-error', data);
   });
+  
 });
